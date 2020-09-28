@@ -19,8 +19,10 @@ $ cd electron-quick-start
 # Installez les dépendances et lancez l'app
 $ npm install && npm start
 
-Le console du développeur est accessible dans le menu 
-View -> Toggle Developer Tools (correspond à F12 dans le navigateur).
+Le console du développeur est accessible dans le menu   
+View -> Toggle Developer Tools (correspond à F12 dans le navigateur).  
+
+Notez que l'initialisation du projet se trouve dans le fichier main.js.
 
 Avantages : 
 On peut avoir des applications multiplateforme uniquement en développant avec des technologies web.
