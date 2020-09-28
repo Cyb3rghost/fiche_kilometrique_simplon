@@ -1,5 +1,5 @@
 | ELEMENT  | TYPE  | DESCRIPTION  |
-|---|---|---|---|---|
+|---|---|---|
 | DATE  | datetime  | La date du déplacement  |
 | TRAJET  | TEXT  | Endroit du déplacement  |
 | COMMENTAIRE  | TEXT  | Description du déplacement  |
