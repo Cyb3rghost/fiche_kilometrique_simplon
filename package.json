@@ -22,6 +22,8 @@
   "dependencies": {
     "datatables.net-bs4": "^1.10.22",
     "datatables.net-responsive-bs4": "^2.2.6",
-    "jquery": "^3.5.1"
+    "jquery": "^3.5.1",
+    "sequelize": "^6.3.5",
+    "sqlite3": "^5.0.0"
   }
 }
