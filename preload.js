@@ -18,47 +18,30 @@ window.addEventListener('DOMContentLoaded', () => {
       dialect: 'sqlite',
       storage: 'FKSBDD.db'
   });
+
+  const Individus = require('./models/Individus');
   
-  try {
+  /*try {
       sequelize.authenticate();
       console.log('Connection has been established successfully.');
   } catch (error) {
       console.error('Unable to connect to the database:', error);
-  }
+  }*/
 
-  var Individus = sequelize.define('individus', {
-    username: {
-      type: Sequelize.STRING,
-      field: 'username' // Will result in an attribute that is firstName when user facing but first_name in the database
-    },
-    password: {
-      type: Sequelize.STRING
-    },
-    nom: {
-      type: Sequelize.STRING
-    },
-    prenom: {
-      type: Sequelize.STRING
-    },
-    fonction: {
-      type: Sequelize.STRING
-    },
-    role: {
-      type: Sequelize.STRING
-    },
-    created_at: {
-      type: Sequelize.STRING
-    },
-    updated_at: {
-      type: Sequelize.STRING
-    }
-  }, {
-    freezeTableName: true // Model tableName will be the same as the model name
+
+  sequelize
+  //.sync({ force: true })
+  .sync()
+  .then(result => {
+
+    Individus.findByPk(1).then(function (individu) {
+        console.log(individu)
+    });
+
+  }).catch(err =>{
+    console.log('an error occursed', err);
   });
 
-  Individus.findByPk(1).then(function (individu) {
-      console.log('TEST')
-  });
 
   /*let Individus = sequelize.define('individus', {
       username: Sequelize.STRING,
