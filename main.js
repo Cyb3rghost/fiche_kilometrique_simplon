@@ -1,6 +1,7 @@
+const {BrowserWindow, Menu}  = require('electron');
 const electron = require('electron');
 const app = require('./app');
- 
+
 let window;
  
 function createWindow() {
@@ -8,11 +9,40 @@ function createWindow() {
     window = new electron.BrowserWindow({
         width: 800,
         height: 600,
-        frame: false
+        webPreferences: {
+            nodeIntegration: true
+        }
     });
- 
+
+    //window.$ = window.jQuery = require('jquery')
+    //console.log( [window.$, window.jQuery ]);
+    //require( 'datatables.net-bs4' )( );
+
+    var menu = Menu.buildFromTemplate([
+        {
+            label: 'Menu',
+                submenu: [
+                {label:'Adjust Notification Value'},
+                {
+                    label:'DevTools',
+                    click() {
+                        window.webContents.openDevTools();
+                    }
+                },
+                {
+                    label:'Exit', 
+                    click() { 
+                        electron.app.quit() 
+                    } 
+                }
+            ]
+        }
+    ])
+
+    Menu.setApplicationMenu(menu); 
+
     /* Si vous décommentez cette ligne, vous verrez la console de débug Chrome */
-    /* window.webContents.openDevTools(); */
+    //window.webContents.openDevTools();
  
     /* Display the homepage of the server */
     window.loadURL('http://127.0.0.1:3000');
@@ -28,6 +58,7 @@ electron.app.on('ready', function () {
     app.start(function () {
         createWindow();
     });
+
 });
  
 /* Cette fonction arrête totalement l'application 

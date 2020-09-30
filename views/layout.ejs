@@ -1,19 +1,38 @@
 <!DOCTYPE html>
 <html>
- 
-<head>
+  <head>
     <meta charset="UTF-8">
-    <title>Hello World!</title>
-    <link rel="stylesheet" href="css/bootstrap.css" />
-</head>
- 
-<body>
-    <nav class="navbar navbar-dark bg-light">
-        <a class="navbar-brand">Navbar</a>
-        <button class="btn btn-outline-danger" id="quit">Quitter</button>
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <title>Fiche Kilométrique - Dashboard</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+
+
+  </head>
+  <body>
+      
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark">
+      <a class="navbar-brand text-white" href="#">FKSimplon</a>
+      <button class="navbar-toggler bg-white" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon text-dark"></span>
+      </button>
+    
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+            <li><a href="/deconnexion">Déconnexion</a></li>
+        </ul>
+      </div>
     </nav>
-    <div class="container">
-        <%- body %>
-    </div>
-</body>
+
+    <%- body %>
+
+    <!-- You can also require other files to run in this process -->
+    <!-- <script> window.$ = window.jQuery = require('jquery');</script> -->
+    <script src="js/jquery-3.5.1.js"></script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.js"></script>
+
+
+  </body>
 </html>
