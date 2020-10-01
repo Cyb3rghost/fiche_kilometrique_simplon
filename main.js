@@ -18,7 +18,7 @@ function createWindow() {
     //console.log( [window.$, window.jQuery ]);
     //require( 'datatables.net-bs4' )( );
 
-    var menu = Menu.buildFromTemplate([
+    /*var menu = Menu.buildFromTemplate([
         {
             label: 'Menu',
                 submenu: [
@@ -37,9 +37,9 @@ function createWindow() {
                 }
             ]
         }
-    ])
+    ])*/
 
-    Menu.setApplicationMenu(menu); 
+    //Menu.setApplicationMenu(); // Personnalise menu.
 
     /* Si vous décommentez cette ligne, vous verrez la console de débug Chrome */
     //window.webContents.openDevTools();

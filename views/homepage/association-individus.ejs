@@ -1,67 +1,86 @@
+<!DOCTYPE html>
+<html>
+   <%- include('../partials/head') -%>
+  <body>
+    
+    <%- include('../partials/header', {username: username}) -%>
+
+
+
+    <!-- You can also require other files to run in this process -->
+
+  </body>
+</html>
+
+
+
+
+
 <div class="jumbotron jumbotron-fluid">
-    <div class="container">
-      <h1 class="display-4">Association des individus</h1>
-    </div>
+  <div class="container">
+    <h1 class="display-4">Association des individus</h1>
   </div>
+</div>
 
 
-  <div class="container p-5">
+<div class="container p-5">
 
-    <a class="btn btn-dark" href="/gestion-des-entitees" role="button">Retour</a>
+  <a class="btn btn-dark" href="/gestion-des-entitees" role="button">Retour</a>
 
-     <br/>
-     <br/>
+   <br/>
+   <br/>
 
-     <div class="card">
+   <div class="card">
 
-      <div class="card-body">
+    <div class="card-body">
 
+      <form method="POST" action="/association-individus">
         <div class="form-group">
           <label for="exampleInputEmail1">Nom de l'entité</label>
-          <input type="text" class="form-control" id="exampleInputEmail1" disabled>
+          <input type="text" class="form-control" value="<%= infoEntitee.nom_entitee %>" disabled>
+          <input type="hidden" class="form-control" name="id_entitee" value="<%= infoEntitee.id %>">
         </div>
         <div class="form-group">
           <label for="exampleInputEmail1">Individus</label>
-          <select class="form-control" id="exampleFormControlSelect1">
-            <option>Individus 1</option>
-            <option>Individus 2</option>
-            <option>Individus 3</option>
+          <select class="form-control" name="id_individu">
+            <% listeIndividus.forEach(function(individu) { %>
+                <option value="<%= individu.id %>"><%= individu.prenom %> <%= individu.nom %></option>
+            <% }); %>
           </select>          
         </div>
         <button type="submit" class="btn btn-dark btn-block">Association</button>
+      </form>
 
-      </div>
+    </div>
 
-     </div>
+   </div>
 
-     <br/>
-     <br/>
+   <br/>
+   <br/>
 
-     <table id="table" class="table">
-      <thead>
+   <table id="table" class="table">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Nom entité</th>
+        <th scope="col">Individus</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% listeAssociationIndividus.forEach(function(association) { %>
         <tr>
-          <th scope="col">#</th>
-          <th scope="col">Nom entité</th>
-          <th scope="col">Individus</th>
-          <th scope="col">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <th scope="row">1</th>
-          <td>Entité</td>
-          <td>Individus1</td>
+          <th scope="row"><%= association.id %></th>
+          <td><%= association.entitee.nom_entitee %></td>
+          <td><%= association.individusId %></td>
           <td>
             <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-trash-fill" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
               <path fill-rule="evenodd" d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1H2.5zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5zM8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5zm3 .5a.5.5 0 0 0-1 0v7a.5.5 0 0 0 1 0v-7z"/>
             </svg>
         </td>
-        </tr>
-      </tbody>
-    </table>
+        </tr>      
+      <% }); %>
+    </tbody>
+  </table>
 
-
-
-
-
-  </div>
+</div>

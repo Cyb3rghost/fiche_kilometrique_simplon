@@ -1,102 +1,114 @@
-<div class="jumbotron jumbotron-fluid">
-    <div class="container">
-      <h1 class="display-4">Dashboard</h1>
-    </div>
-  </div>
+<!DOCTYPE html>
+<html>
+   <%- include('../partials/head') -%>
+  <body>
+    
+    <%- include('../partials/header', {username: username}) -%>
 
-  <div class="container">
-
-    <div class="row mt-5">
-
-      <div class="col-md-6">
-
-          <a href="/gestion-des-entitees">
+    <div class="jumbotron jumbotron-fluid">
+        <div class="container">
+          <h1 class="display-4">Dashboard</h1>
+        </div>
+      </div>
+    
+      <div class="container">
+    
+        <div class="row mt-5">
+    
+          <div class="col-md-6">
+    
+              <a href="/gestion-des-entitees">
+                <div class="card bg-dark text-white">
+    
+                <div class="card-body text-center">
+    
+                    Gestion des entitées
+    
+                </div>
+    
+               </div>
+              </a>
+    
+    
+          </div>
+    
+          <div class="col-md-6">
+    
+            <a href="/gestion-individus">
             <div class="card bg-dark text-white">
-
-            <div class="card-body text-center">
-
-                Gestion des entitées
-
+    
+              <div class="card-body text-center">
+    
+                  Gestion des individus
+    
+              </div>
+    
             </div>
-
-           </div>
-          </a>
-
-
-      </div>
-
-      <div class="col-md-6">
-
-        <a href="/gestion-individus">
-        <div class="card bg-dark text-white">
-
-          <div class="card-body text-center">
-
-              Gestion des individus
-
+            </a><br/>
+    
           </div>
-
-        </div>
-        </a><br/>
-
-      </div>
-
-      <div class="col-md-6">
-
-        <a href="/gestion-vehicules">
-        <div class="card bg-dark text-white">
-
-          <div class="card-body text-center">
-
-              Gestion des véhicules
-
+    
+          <div class="col-md-6">
+    
+            <a href="/gestion-vehicules">
+            <div class="card bg-dark text-white">
+    
+              <div class="card-body text-center">
+    
+                  Gestion des véhicules
+    
+              </div>
+    
+            </div>
+            </a><br/>
+    
+    
           </div>
-
-        </div>
-        </a><br/>
-
-
-      </div>
-
-      <div class="col-md-6">
-
-        <a href="/suivis-indemnites">
-        <div class="card bg-dark text-white">
-
-          <div class="card-body text-center">
-
-              Suivis des indemnitées
-
+    
+          <div class="col-md-6">
+    
+            <a href="/suivis-indemnites">
+            <div class="card bg-dark text-white">
+    
+              <div class="card-body text-center">
+    
+                  Suivis des indemnitées
+    
+              </div>
+    
+            </div>
+            </a><br/>
+    
+    
           </div>
-
-        </div>
-        </a><br/>
-
-
-      </div>
-
-      <br/>
-
-      <div class="col-md-6">
-
-        <a href="/fiches-kilometriques">
-        <div class="card bg-dark text-white">
-
-          <div class="card-body text-center">
-
-              Fiches kilométriques
-
+    
+          <br/>
+    
+          <div class="col-md-6">
+    
+            <a href="/fiches-kilometriques">
+            <div class="card bg-dark text-white">
+    
+              <div class="card-body text-center">
+    
+                  Fiches kilométriques
+    
+              </div>
+    
+            </div>
+            </a>
+    
+    
           </div>
-
+    
         </div>
-        </a>
-
-
+    
+    
+    
+    
       </div>
 
-    </div>
+    <!-- You can also require other files to run in this process -->
 
-
-
-
-  </div>
+  </body>
+</html>

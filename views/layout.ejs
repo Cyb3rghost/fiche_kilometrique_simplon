@@ -3,12 +3,13 @@
   <head>
     <meta charset="UTF-8">
     <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
-    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'"> -->
     <title>Fiche Kilométrique - Dashboard</title>
     <link rel="stylesheet" href="css/bootstrap.css">
-
-
+    <script> window.$ = window.jQuery = require('jquery');</script>
+    <script src="js/popper.js"></script>
+    <script src="js/bootstrap.js"></script>
   </head>
   <body>
       
@@ -20,7 +21,12 @@
     
       <div class="collapse navbar-collapse" id="navbarSupportedContent">
         <ul class="navbar-nav mr-auto">
-            <li><a href="/deconnexion">Déconnexion</a></li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="#">Bienvenue, <span class="sr-only">(current)</span></a>
+          </li>
+          <li class="nav-item active">
+            <a class="nav-link text-white" href="/deconnexion">Déconnexion <span class="sr-only">(current)</span></a>
+          </li>
         </ul>
       </div>
     </nav>
@@ -28,11 +34,6 @@
     <%- body %>
 
     <!-- You can also require other files to run in this process -->
-    <!-- <script> window.$ = window.jQuery = require('jquery');</script> -->
-    <script src="js/jquery-3.5.1.js"></script>
-    <script src="js/popper.js"></script>
-    <script src="js/bootstrap.js"></script>
-
 
   </body>
 </html>
