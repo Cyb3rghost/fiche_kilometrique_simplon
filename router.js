@@ -16,8 +16,14 @@ const AssociationIndividus = require('./models/AssociationIndividus');
 
 /* DEFINITION DES RELATIONS */
 
-Entitee.belongsToMany(Individus, { through: AssociationIndividus });
-Individus.belongsToMany(Entitee, { through: AssociationIndividus });
+Entitee.hasMany(AssociationIndividus, {
+    foreignKey: 'entiteeId'
+});
+AssociationIndividus.belongsTo(Entitee);
+Individus.hasMany(AssociationIndividus, {
+    foreignKey: 'individuId'
+});
+AssociationIndividus.belongsTo(Individus)
 
 /* DEFINITION DES RELATIONS */
 
