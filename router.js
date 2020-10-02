@@ -4,6 +4,7 @@ const expressApp = express();
 const http = require('http').Server(expressApp);
 var bodyParser = require('body-parser') 
 var session = require('express-session')
+const axios = require('axios');
 
 const path = require('path');
 
@@ -13,6 +14,7 @@ const Entitee = require('./models/Entitee');
 const AssociationIndividus = require('./models/AssociationIndividus');
 const Vehicules = require('./models/Vehicule');
 const AssociationVehicules = require('./models/AssociationVehicules');
+const Fiches = require('./models/Fiches');
 
 /* DEFINITION DES MODELS */
 
@@ -57,6 +59,10 @@ function start(callback) {
 
                 Entitee.belongsToMany(Vehicules, { through: AssociationVehicules });
                 Vehicules.belongsToMany(Entitee, { through: AssociationVehicules });
+
+                Individus.belongsToMany(Entitee, { through: Fiches });
+                Entitee.belongsToMany(Vehicules, { through: Fiches });
+                Vehicules.belongsToMany(Entitee, { through: Fiches });
 
                 sequelize
                     .sync()
@@ -596,8 +602,65 @@ function loadRoutes(callback) {
         else
         {
 
-            res.render('homepage/fiches-kilometriques', { username: req.session.username, userId: req.session.userId, role: req.session.role });
+            var entiteInfo;
 
+            Fiches.findAll().then(function (result) { 
+                ficheInfo = result;
+                return Vehicules.findAll();
+
+            }).then(allVehicules => {
+
+                ficheInfo.getVehicules().then(vehiculesRelation => {
+
+                    infosVehicule = vehiculesRelation
+
+                    console.log(ficheInfo)
+                    console.log(infosVehicule)
+
+                    res.render('homepage/fiches-kilometriques', { 
+                        username: req.session.username, 
+                        userId: req.session.userId, 
+                        role: req.session.role,
+                        infosFiche: ficheInfo,
+                        listeAssociationVehicules: infosVehicule
+                    });
+
+                })
+
+                /*ficheInfo.getVehicules().then(vehiculesRelation => {
+
+                    infosVehicule = vehiculesRelation
+
+                    return Individus.findAll()
+
+                }).getIndividus().then(individusRelation => {
+
+                    infosIndividus = individusRelation
+
+                    return Entitee.findAll()
+
+                }).getEntitee().then(entiteeRelation => {
+
+                    infosEntitee = entiteeRelation
+
+                    console.log(infosVehicule)
+                    console.log(infosIndividus)
+                    console.log(infosEntitee)
+
+                    res.render('homepage/fiches-kilometriques', { 
+                        username: req.session.username, 
+                        userId: req.session.userId, 
+                        role: req.session.role,
+                        listeAssociationVehicules: infosVehicule,
+                        listeAssociationIndividus: infosIndividus,
+                        listeAssociationEntitee: infosEntitee
+                    });
+
+                })*/
+
+            }).catch(error => {
+                console.log(error)
+            })
         }
 
     });
@@ -617,7 +680,10 @@ function loadRoutes(callback) {
 
                 console.log(result)
 
-                res.render('homepage/nouvelle-fiche', { username: req.session.username, userId: req.session.userId, role: req.session.role, listeEntitee: result });
+                var nouvelleDate = new Date();
+                var dateDuJour = nouvelleDate.getFullYear() + '-' + (nouvelleDate.getMonth() + 1) + '-' + '0' + nouvelleDate.getDate() 
+
+                res.render('homepage/nouvelle-fiche', { username: req.session.username, userId: req.session.userId, role: req.session.role, listeEntitee: result, date: dateDuJour });
     
                 //res.redirect('/gestion-des-entitees');
                 
@@ -628,6 +694,58 @@ function loadRoutes(callback) {
 
 
         }  
+
+    });
+
+    expressApp.get('/listeAssociationVehicule/:id', function(req, res) {
+
+        var idEntitee = req.params.id
+
+        Entitee.findByPk(idEntitee).then(function (result) { 
+            entiteInfo = result;
+            return Vehicules.findAll();
+
+        }).then(allVehicules => {
+
+            entiteInfo.getVehicules().then(vehiculesRelation => {
+                
+                console.log(vehiculesRelation)
+                res.json(vehiculesRelation)
+
+            })
+
+
+        }).catch(error => {
+            console.log(error)
+        })
+
+    });
+
+    expressApp.post('/nouvelle-fiche', function(req, res) {
+
+        var idUtilisateur = req.body.userId
+        var dateActuel = req.body.date
+        var idEntitee = req.body.choisir_entitee
+        var idVehicule = req.body.choisir_vehicule
+
+        Fiches.create(
+        { 
+            individuId: idUtilisateur,
+            date: dateActuel,
+            entiteeId: idEntitee,
+            vehiculeId: idVehicule
+
+        }).then(function (result) {
+
+            console.log(result)
+
+            res.redirect('/fiches-kilometriques');
+            
+        })
+        .catch(function (error) {
+                console.log(error)
+        });
+
 
     });
 

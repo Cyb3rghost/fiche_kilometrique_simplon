@@ -25,6 +25,10 @@
 
           <form method="POST" action="/nouvelle-fiche">
             <div class="form-group">
+              <label>Date</label>
+              <input type="date" name="date" class="form-control" value="<%= date %>">
+            </div>
+            <div class="form-group">
               <label>Choisir une entitée</label>
               <select class="form-control" id="choisir_entitee" name="choisir_entitee">
                 <% listeEntitee.forEach(function(entitee) { %>
@@ -33,11 +37,9 @@
               </select>
               <input type="hidden" class="form-control" name="userId" value="<%= userId %>">
             </div>
-            <div class="form-group">
+            <div class="form-group affVehicule" style="display: none;">
               <label>Véhicules</label>
-              <select class="form-control" name="choisir_vehicule">
-                <option>Entreprise</option>
-                <option>Association</option>
+              <select class="form-control" id="choisir_vehicule" name="choisir_vehicule">
               </select>          
             </div>
             <button type="submit" class="btn btn-dark btn-block">Création</button>
