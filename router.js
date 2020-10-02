@@ -11,19 +11,23 @@ const path = require('path');
 const Individus = require('./models/Individus');
 const Entitee = require('./models/Entitee');
 const AssociationIndividus = require('./models/AssociationIndividus');
+const Vehicules = require('./models/Vehicule');
+const AssociationVehicules = require('./models/AssociationVehicules');
 
 /* DEFINITION DES MODELS */
 
 /* DEFINITION DES RELATIONS */
 
-Entitee.hasMany(AssociationIndividus, {
-    foreignKey: 'entiteeId'
-});
-AssociationIndividus.belongsTo(Entitee);
-Individus.hasMany(AssociationIndividus, {
-    foreignKey: 'individuId'
-});
-AssociationIndividus.belongsTo(Individus)
+// Entitee.hasMany(AssociationIndividus, {
+//     foreignKey: 'entiteeId'
+// });
+// AssociationIndividus.belongsTo(Entitee);
+// Individus.hasMany(AssociationIndividus, {
+//     foreignKey: 'individuId'
+// });
+// AssociationIndividus.belongsTo(Individus)
+
+
 
 /* DEFINITION DES RELATIONS */
 
@@ -47,14 +51,29 @@ function start(callback) {
     if (router.isStarted === false) {
         init(function () {
             loadRoutes(function () {
-                /* Lance le serveur web sur le port 3000 */
-                http.listen(3000, function () {
-                    console.log('Application is running on port 3000');
-                    router.isStarted = true;
-                    if (typeof callback != 'undefined') {
-                        callback();
-                    }
-                });
+
+                Entitee.belongsToMany(Individus, { through: AssociationIndividus });
+                Individus.belongsToMany(Entitee, { through: AssociationIndividus });
+
+                Entitee.belongsToMany(Vehicules, { through: AssociationVehicules });
+                Vehicules.belongsToMany(Entitee, { through: AssociationVehicules });
+
+                sequelize
+                    .sync()
+                    .then(result => {
+                        /* Lance le serveur web sur le port 3000 */
+                        http.listen(3000, function () {
+                            console.log('Application is running on port 3000');
+                            router.isStarted = true;
+                            if (typeof callback != 'undefined') {
+                                callback();
+                            }
+                        });
+                    })
+                    .catch(error => {
+                        console.log(error)
+                    })
+            
             });
         });
     } else {
@@ -245,42 +264,26 @@ function loadRoutes(callback) {
         }
         else
         {
-
             idEntitee = req.params.id
+            var entiteInfo;
 
-            Entitee.findByPk(idEntitee).then(function (result) {
-
-                Individus.findAll().then(function (resultDeux) {
-
-                    AssociationIndividus.findAll({
-                        include: {
-                            model: Entitee,
-                            model: Individus
-                        },
-                        entiteeId: idEntitee
-                    }).then(function (resultTrois) {
-
-                        console.log(resultTrois)
-
-                        res.render('homepage/association-individus', { username: req.session.username, userId: req.session.userId, role: req.session.role, infoEntitee: result, listeIndividus: resultDeux, listeAssociationIndividus: resultTrois });
-                            
-                    })
-                    .catch(function (error) {
-                            console.log(error)
+            Entitee.findByPk(idEntitee).then(function (result) { 
+                entiteInfo = result;
+                return Individus.findAll();
+            }).then(allIndividus => {
+                entiteInfo.getIndividus().then(individusRelation => {
+                    res.render('homepage/association-individus', {
+                        username: req.session.username,
+                        userId: req.session.userId,
+                        role: req.session.role,
+                        infoEntitee: entiteInfo,
+                        listeIndividus: allIndividus,
+                        listeAssociationIndividus: individusRelation
                     });
-                        
                 })
-                .catch(function (error) {
-                        console.log(error)
-                });
-
-                    
+            }).catch(error => {
+                console.log(error)
             })
-            .catch(function (error) {
-                    console.log(error)
-            });
-
-
         }
 
     });
@@ -291,23 +294,24 @@ function loadRoutes(callback) {
         var idIndividu = req.body.id_individu
 
         AssociationIndividus.findOne({
-            entiteeId: idEntitee,
-            individusId: idIndividu
-        }).then(function (result) {
-        
+            where: {
+                entiteeId: idEntitee,
+                individuId: idIndividu
+            }
+        }).then(function(result) {
                 if(result === null)
                 {
 
                     AssociationIndividus.create(
                         { 
                             entiteeId: idEntitee, 
-                            individusId: idIndividu 
+                            individuId: idIndividu 
                 
                         }).then(function (resultDeux) {
                 
                             console.log(resultDeux)
                 
-                            res.redirect('/association-individus/' + idEntitee);
+                            return res.redirect('/association-individus/' + idEntitee);
                             
                         })
                         .catch(function (error) {
@@ -324,12 +328,12 @@ function loadRoutes(callback) {
                 
             })
             .catch(function (error) {
-                    console.log(error)
+            console.log(error)
         });
 
     });
 
-    expressApp.get('/association-vehicules', function (req, res) {
+    expressApp.get('/association-vehicules/:id', function (req, res) {
 
         if(req.session.userId == undefined)
         {
@@ -340,9 +344,69 @@ function loadRoutes(callback) {
         else
         {
 
-            res.render('homepage/association-vehicules', { username: req.session.username, userId: req.session.userId, role: req.session.role });
+            idEntitee = req.params.id
+            var entiteInfo;
+
+            Entitee.findByPk(idEntitee).then(function (result) { 
+                entiteInfo = result;
+                return Vehicules.findAll();
+
+            }).then(allVehicules => {
+
+                res.render('homepage/association-vehicules', { username: req.session.username, userId: req.session.userId, role: req.session.role, entiteInfo: entiteInfo, listeVehicules: allVehicules });
+
+
+            }).catch(error => {
+                console.log(error)
+            })
+
 
         }
+
+    });
+
+    expressApp.post('/association-vehicule', function(req, res) {
+
+        var idEntitee = req.body.id_entitee
+        var idVehicule = req.body.id_vehicule
+
+        AssociationVehicules.findOne({
+            where: {
+                entiteeId: idEntitee,
+                vehiculeId: idVehicule
+            }
+        }).then(function(result) {
+                if(result === null)
+                {
+
+                    AssociationVehicules.create(
+                        { 
+                            entiteeId: idEntitee, 
+                            vehiculeId: idVehicule 
+                
+                        }).then(function (resultDeux) {
+                
+                            console.log(resultDeux)
+                
+                            return res.redirect('/association-vehicules/' + idEntitee);
+                            
+                        })
+                        .catch(function (error) {
+                                console.log(error)
+                    });
+
+                }
+                else
+                {
+
+                    console.log('Cette association existe déjà.')
+
+                }
+                
+            })
+            .catch(function (error) {
+            console.log(error)
+        });
 
     });
 
@@ -391,7 +455,18 @@ function loadRoutes(callback) {
         else
         {
 
-            res.render('homepage/gestion-vehicules', { username: req.session.username, userId: req.session.userId, role: req.session.role });
+            Vehicules.findAll().then(function (result) {
+
+                console.log(result)
+    
+                res.render('homepage/gestion-vehicules', { username: req.session.username, userId: req.session.userId, role: req.session.role, listeVehicules: result });
+
+                
+            })
+            .catch(function (error) {
+                    console.log(error)
+            });
+
 
         }
 
@@ -411,6 +486,36 @@ function loadRoutes(callback) {
             res.render('homepage/nouveau-vehicule', { username: req.session.username, userId: req.session.userId, role: req.session.role });
 
         }
+
+    });
+
+    expressApp.post('/nouveau-vehicule', function(req, res) {
+
+        var marque = req.body.marque
+        var modele = req.body.modele
+        var puissance = req.body.puissance
+        var annee = req.body.annee
+        var immatriculation = req.body.immatriculation
+
+        Vehicules.create(
+            { 
+                marque: marque,
+                modele: modele,
+                puissance: puissance,
+                annee: annee,
+                immatriculation: immatriculation
+    
+            }).then(function (result) {
+    
+                console.log(result)
+    
+                res.redirect('/gestion-vehicules');
+                
+            })
+            .catch(function (error) {
+                    console.log(error)
+            });
+
 
     });
 

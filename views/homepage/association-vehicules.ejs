@@ -33,19 +33,22 @@
 
     <div class="card-body">
 
-      <div class="form-group">
-        <label for="exampleInputEmail1">Nom de l'entité</label>
-        <input type="text" class="form-control" id="exampleInputEmail1" disabled>
-      </div>
-      <div class="form-group">
-        <label for="exampleInputEmail1">Véhicules</label>
-        <select class="form-control" id="exampleFormControlSelect1">
-          <option>Véhicule 1</option>
-          <option>Véhicule 2</option>
-          <option>Véhicule 3</option>
-        </select>          
-      </div>
-      <button type="submit" class="btn btn-dark btn-block">Association</button>
+      <form method="POST" action="/association-vehicule">
+        <div class="form-group">
+          <label for="exampleInputEmail1">Nom de l'entité</label>
+          <input type="text" class="form-control" value="<%= entiteInfo.nom_entitee %>" disabled>
+          <input type="hidden" class="form-control" name="id_entitee" value="<%= entiteInfo.id %>">
+        </div>
+        <div class="form-group">
+          <label for="exampleInputEmail1">Véhicules</label>
+          <select class="form-control" name="id_vehicule">
+            <% listeVehicules.forEach(function(vehicule) { %>
+                <option value="<%= vehicule.id %>"><%= vehicule.marque %> - <%= vehicule.modele %> - <%= vehicule.immatriculation %></option>
+            <% }); %>
+          </select>          
+        </div>
+        <button type="submit" class="btn btn-dark btn-block">Association</button>
+      </form>
 
     </div>
 

@@ -24,27 +24,29 @@
 
         <div class="card-body">
 
+          <form method="POST" action="/nouveau-vehicule">
           <div class="form-group">
             <label for="exampleInputEmail1">Marque</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <input type="text" class="form-control" name="marque">
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Modèle</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <input type="text" class="form-control" name="modele">
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Puissance</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <input type="text" class="form-control" name="puissance">
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Année</label>
-            <input type="number" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <input type="number" class="form-control" name="annee">
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Immatriculation</label>
-            <input type="text" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
+            <input type="text" class="form-control" name="immatriculation">
           </div>
           <button type="submit" class="btn btn-dark btn-block">Création</button>
+          </form>
 
 
         </div>

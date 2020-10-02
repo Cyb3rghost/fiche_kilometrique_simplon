@@ -1,7 +1,7 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('./../database');
 
-const AssociationIndividus = sequelize.define('association_individus', {
+const AssociationVehicules = sequelize.define('association_vehicules', {
     id: {
       type: DataTypes.INTEGER,
       autoIncrement: true,
@@ -10,4 +10,4 @@ const AssociationIndividus = sequelize.define('association_individus', {
     }
   }, { timestamps: true });
 
-module.exports = AssociationIndividus;
+module.exports = AssociationVehicules;
