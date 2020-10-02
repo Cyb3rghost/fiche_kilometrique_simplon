@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+   <%- include('../partials/head') -%>
+  <body>
+    
+    <%- include('../partials/header', {username: username}) -%>
+
+    <div class="jumbotron jumbotron-fluid">
+      <div class="container">
+        <h1 class="display-4">Nouvelle fiche</h1>
+      </div>
+    </div>
+
+
+    <div class="container p-5">
+
+      <a class="btn btn-dark" href="/fiches-kilometriques" role="button">Retour</a>
+
+       <br/>
+       <br/>
+
+       <div class="card">
+
+        <div class="card-body">
+
+          <form method="POST" action="/nouvelle-fiche">
+            <div class="form-group">
+              <label>Choisir une entitée</label>
+              <select class="form-control" id="choisir_entitee" name="choisir_entitee">
+                <% listeEntitee.forEach(function(entitee) { %>
+                  <option value="<%= entitee.id %>"><%= entitee.nom_entitee %></option>
+                <% }); %>
+              </select>
+              <input type="hidden" class="form-control" name="userId" value="<%= userId %>">
+            </div>
+            <div class="form-group">
+              <label>Véhicules</label>
+              <select class="form-control" name="choisir_vehicule">
+                <option>Entreprise</option>
+                <option>Association</option>
+              </select>          
+            </div>
+            <button type="submit" class="btn btn-dark btn-block">Création</button>
+          </form>
+
+        </div>
+
+       </div>
+
+    </div>
+
+    <!-- You can also require other files to run in this process -->
+
+  </body>
+</html>

@@ -353,7 +353,17 @@ function loadRoutes(callback) {
 
             }).then(allVehicules => {
 
-                res.render('homepage/association-vehicules', { username: req.session.username, userId: req.session.userId, role: req.session.role, entiteInfo: entiteInfo, listeVehicules: allVehicules });
+                entiteInfo.getVehicules().then(vehiculesRelation => {
+                    res.render('homepage/association-vehicules', { 
+                        username: req.session.username, 
+                        userId: req.session.userId, 
+                        role: req.session.role, 
+                        entiteInfo: entiteInfo, 
+                        listeVehicules: allVehicules,
+                        listeAssociationVehicules: vehiculesRelation
+                    });
+
+                })
 
 
             }).catch(error => {
@@ -421,7 +431,17 @@ function loadRoutes(callback) {
         else
         {
 
-            res.render('homepage/gestion-individus', { username: req.session.username, userId: req.session.userId, role: req.session.role });
+            Individus.findAll().then(function (result) {
+
+                console.log(result)
+    
+                res.render('homepage/gestion-individus', { username: req.session.username, userId: req.session.userId, role: req.session.role, listeIndividus: result });
+                
+            })
+            .catch(function (error) {
+                    console.log(error)
+            });
+
 
         }
 
@@ -441,6 +461,35 @@ function loadRoutes(callback) {
             res.render('homepage/nouvelle-individu', { username: req.session.username, userId: req.session.userId, role: req.session.role });
 
         }
+
+    });
+
+    expressApp.post('/nouvelle-individu', function(req, res){
+
+        var nom = req.body.nom
+        var prenom = req.body.prenom
+        var fonction = req.body.fonction
+
+        Individus.create(
+        { 
+                username: nom, 
+                password: 'test',
+                nom: nom,
+                prenom: prenom,
+                fonction: fonction,
+                role: 'user' 
+    
+            }).then(function (resultDeux) {
+    
+                console.log(resultDeux)
+    
+                return res.redirect('/gestion-individus');
+                
+            })
+            .catch(function (error) {
+                    console.log(error)
+        });
+
 
     });
 
@@ -550,6 +599,35 @@ function loadRoutes(callback) {
             res.render('homepage/fiches-kilometriques', { username: req.session.username, userId: req.session.userId, role: req.session.role });
 
         }
+
+    });
+
+    expressApp.get('/nouvelle-fiche', function(req, res) {
+
+        if(req.session.userId == undefined)
+        {
+
+            res.redirect('/');
+
+        }
+        else
+        {
+
+            Entitee.findAll().then(function (result) {
+
+                console.log(result)
+
+                res.render('homepage/nouvelle-fiche', { username: req.session.username, userId: req.session.userId, role: req.session.role, listeEntitee: result });
+    
+                //res.redirect('/gestion-des-entitees');
+                
+            })
+            .catch(function (error) {
+                    console.log(error)
+            });
+
+
+        }  
 
     });
 
