@@ -15,23 +15,9 @@ const AssociationIndividus = require('./models/AssociationIndividus');
 const Vehicules = require('./models/Vehicule');
 const AssociationVehicules = require('./models/AssociationVehicules');
 const Fiches = require('./models/Fiches');
-
+const Baremes = require('./models/Bareme');
+const Trajet = require('./models/Trajet');
 /* DEFINITION DES MODELS */
-
-/* DEFINITION DES RELATIONS */
-
-// Entitee.hasMany(AssociationIndividus, {
-//     foreignKey: 'entiteeId'
-// });
-// AssociationIndividus.belongsTo(Entitee);
-// Individus.hasMany(AssociationIndividus, {
-//     foreignKey: 'individuId'
-// });
-// AssociationIndividus.belongsTo(Individus)
-
-
-
-/* DEFINITION DES RELATIONS */
 
 const sequelize = require('./database');
  
@@ -60,9 +46,19 @@ function start(callback) {
                 Entitee.belongsToMany(Vehicules, { through: AssociationVehicules });
                 Vehicules.belongsToMany(Entitee, { through: AssociationVehicules });
 
-                Individus.belongsToMany(Entitee, { through: Fiches });
-                Entitee.belongsToMany(Vehicules, { through: Fiches });
-                Vehicules.belongsToMany(Entitee, { through: Fiches });
+                Baremes.hasMany(Vehicules)
+                Vehicules.belongsTo(Baremes)
+
+                Individus.hasMany(Trajet);
+                Individus.hasMany(Fiches);
+                Entitee.hasMany(Fiches);
+                Vehicules.hasMany(Fiches);
+                Fiches.hasMany(Trajet)
+                Fiches.belongsTo(Individus);
+                Fiches.belongsTo(Entitee);
+                Fiches.belongsTo(Vehicules);
+                Trajet.belongsTo(Individus);
+                Trajet.belongsTo(Fiches);
 
                 sequelize
                     .sync()
@@ -510,7 +506,7 @@ function loadRoutes(callback) {
         else
         {
 
-            Vehicules.findAll().then(function (result) {
+            Vehicules.findAll( { include: [ Baremes ] } ).then(function (result) {
 
                 console.log(result)
     
@@ -538,7 +534,18 @@ function loadRoutes(callback) {
         else
         {
 
-            res.render('homepage/nouveau-vehicule', { username: req.session.username, userId: req.session.userId, role: req.session.role });
+            Baremes.findAll().then(function (result) {
+
+                console.log(result)
+    
+                res.render('homepage/nouveau-vehicule', { username: req.session.username, userId: req.session.userId, role: req.session.role, baremes: result });
+
+                
+            })
+            .catch(function (error) {
+                    console.log(error)
+            });
+
 
         }
 
@@ -556,7 +563,7 @@ function loadRoutes(callback) {
             { 
                 marque: marque,
                 modele: modele,
-                puissance: puissance,
+                baremeId: puissance,
                 annee: annee,
                 immatriculation: immatriculation
     
@@ -602,65 +609,21 @@ function loadRoutes(callback) {
         else
         {
 
-            var entiteInfo;
+            Fiches.findAll({ include: [Individus, Vehicules, Entitee] }).then(function (result) {
 
-            Fiches.findAll().then(function (result) { 
-                ficheInfo = result;
-                return Vehicules.findAll();
-
-            }).then(allVehicules => {
-
-                ficheInfo.getVehicules().then(vehiculesRelation => {
-
-                    infosVehicule = vehiculesRelation
-
-                    console.log(ficheInfo)
-                    console.log(infosVehicule)
-
-                    res.render('homepage/fiches-kilometriques', { 
-                        username: req.session.username, 
-                        userId: req.session.userId, 
-                        role: req.session.role,
-                        infosFiche: ficheInfo,
-                        listeAssociationVehicules: infosVehicule
-                    });
-
-                })
-
-                /*ficheInfo.getVehicules().then(vehiculesRelation => {
-
-                    infosVehicule = vehiculesRelation
-
-                    return Individus.findAll()
-
-                }).getIndividus().then(individusRelation => {
-
-                    infosIndividus = individusRelation
-
-                    return Entitee.findAll()
-
-                }).getEntitee().then(entiteeRelation => {
-
-                    infosEntitee = entiteeRelation
-
-                    console.log(infosVehicule)
-                    console.log(infosIndividus)
-                    console.log(infosEntitee)
-
-                    res.render('homepage/fiches-kilometriques', { 
-                        username: req.session.username, 
-                        userId: req.session.userId, 
-                        role: req.session.role,
-                        listeAssociationVehicules: infosVehicule,
-                        listeAssociationIndividus: infosIndividus,
-                        listeAssociationEntitee: infosEntitee
-                    });
-
-                })*/
-
-            }).catch(error => {
-                console.log(error)
+                console.log(result)
+    
+                res.render('homepage/fiches-kilometriques', { 
+                    username: req.session.username, 
+                    userId: req.session.userId, 
+                    role: req.session.role,
+                    infosFiche: result
+                });                
             })
+            .catch(function (error) {
+                    console.log(error)
+            });
+
         }
 
     });
@@ -730,8 +693,8 @@ function loadRoutes(callback) {
 
         Fiches.create(
         { 
-            individuId: idUtilisateur,
             date: dateActuel,
+            individuId: idUtilisateur,
             entiteeId: idEntitee,
             vehiculeId: idVehicule
 
@@ -749,7 +712,7 @@ function loadRoutes(callback) {
 
     });
 
-    expressApp.get('/voir-fiche-kilometrique', function (req, res) {
+    expressApp.get('/voir-fiche-kilometrique/:id', function (req, res) {
 
         if(req.session.userId == undefined)
         {
@@ -760,9 +723,126 @@ function loadRoutes(callback) {
         else
         {
 
-            res.render('homepage/voir-fiche-kilometrique', { username: req.session.username, userId: req.session.userId, role: req.session.role });
+            var idFiche = req.params.id
+
+            Fiches.findOne({
+                where: { id: idFiche },
+                include: [
+                    {
+                    model: Vehicules, 
+                    include: [{ model: Baremes}]
+                    },
+                    { model: Entitee},
+                    { model: Individus}
+            
+                ]
+            }).then(function (result) {
+                console.log(result)
+
+                Trajet.findAll({
+                    where: { fichId: idFiche }
+                }).then(function (resultDeux) {
+                    console.log(resultDeux)
+    
+                    res.render('homepage/voir-fiche-kilometrique', { username: req.session.username, userId: req.session.userId, role: req.session.role, infosFiche: result, trajets: resultDeux });
+                }).catch(error => {
+                    console.log(error)
+                })
+
+            }).catch(error => {
+                console.log(error)
+            })
 
         }
+
+    });
+
+    expressApp.get('/delete-trajet/:id/:idfiche', function(req, res, next) {
+
+        var idTrajet = req.params.id
+        var idFiche = req.params.idfiche
+
+        Trajet.destroy({
+            where: {
+              id: idTrajet
+            },
+            force: true
+        }).then(function (result) {
+            console.log(result)
+
+            //res.send(result)
+            
+            res.redirect('/voir-fiche-kilometrique/' + idFiche)
+
+        }).catch(error => {
+            console.log(error)
+        });
+
+        //res.send(idTrajet)
+
+
+    });
+
+    expressApp.post('/mise-a-jour-fiche', function(req, res) {
+
+        var totalTrajet = req.body.total_trajet
+        var chevauxFiscaux = req.body.chevauxFiscaux
+        var totalKilometrage = req.body.totalKilometrage
+        var compensation = req.body.compensationKilometrage
+        var individu = req.body.individu
+        var fiche = req.body.fiche
+        startBoucle = 1
+
+        if(totalKilometrage.length === 0 && compensation.length === 0)
+        {
+
+            console.log('Aucun kilometrage & compensation enregistré.')
+
+        }
+        else
+        {
+
+
+            for (let index = 0; index < totalTrajet; index++) {
+
+                console.log(startBoucle)
+
+                var date = 'date' + startBoucle
+                var trajet = 'trajet' + startBoucle
+                var commentaire = 'commentaire' + startBoucle
+                var depart = 'depart' + startBoucle
+                var arrivee = 'arrivee' + startBoucle
+                var distance = 'distance' + startBoucle
+
+                Trajet.create(
+                { 
+                    date: req.body[date], 
+                    trajet: req.body[trajet],
+                    commentaire: req.body[commentaire],
+                    depart: req.body[depart],
+                    arrivee: req.body[arrivee],
+                    distance: req.body[distance],
+                    individuId: individu,
+                    fichId: fiche
+        
+                }).then(function (result) {
+        
+                    console.log(result)
+                    
+                })
+                .catch(function (error) {
+                        console.log(error)
+                });
+
+                startBoucle = startBoucle + parseInt(1)
+                
+            }
+
+            res.redirect('/voir-fiche-kilometrique/' + fiche);
+
+        }
+
+
 
     });
     

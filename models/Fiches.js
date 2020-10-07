@@ -7,7 +7,10 @@ const Fiches = sequelize.define('fiches', {
       autoIncrement: true,
       allowNull: false,
       primaryKey: true
-    }
+    },
+    date: {
+      type: DataTypes.DATEONLY
+    } 
   }, { timestamps: true });
 
 module.exports = Fiches;

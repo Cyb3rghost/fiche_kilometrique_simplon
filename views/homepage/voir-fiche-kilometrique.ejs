@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html>
    <%- include('../partials/head') -%>
@@ -20,6 +19,125 @@
   
        <br/>
        <br/>
+
+       <% var totalKilometrage = 0
+       var compensation = 0
+       
+       trajets.forEach(function(trajet) { 
+
+          totalKilometrage = totalKilometrage + trajet.distance
+
+        }); 
+        
+        switch (infosFiche.vehicule.bareme.chevauxFiscaux) {
+          case '3 CV et moins' :
+                  if(totalKilometrage <= 5000 )
+                  {
+            
+                      compensation = totalKilometrage * 0.410
+            
+                  }
+                  else if (totalKilometrage > 5001 && totalKilometrage < 20000) 
+                  {
+                    
+                    compensation = (totalKilometrage * 0.245) + 824
+            
+                  } 
+                  else if (totalKilometrage > 20000) 
+                  {
+                    
+                    compensation = totalKilometrage * 0.285
+            
+                  }
+                  break;
+          
+          case '4 CV' :
+                  if(totalKilometrage <= 5000 )
+                  {
+            
+                      compensation = totalKilometrage * 0.493
+            
+                  }
+                  else if (totalKilometrage > 5001 && totalKilometrage < 20000) 
+                  {
+                    
+                    compensation = (totalKilometrage * 0.270) + 1082
+            
+                  } 
+                  else if (totalKilometrage > 20000) 
+                  {
+                    
+                    compensation = totalKilometrage * 0.332
+            
+                  }
+                  break;
+          
+          case '5 CV' :
+                  if(totalKilometrage <= 5000 )
+                  {
+            
+                      compensation = totalKilometrage * 0.543
+            
+                  }
+                  else if (totalKilometrage > 5001 && totalKilometrage < 20000) 
+                  {
+                    
+                    compensation = (totalKilometrage * 0.305) + 1188
+            
+                  } 
+                  else if (totalKilometrage > 20000) 
+                  {
+                    
+                    compensation = totalKilometrage * 0.364
+            
+                  }
+                  break;
+
+          case '6 CV' :
+                  if(totalKilometrage <= 5000 )
+                  {
+            
+                      compensation = totalKilometrage * 0.568
+            
+                  }
+                  else if (totalKilometrage > 5001 && totalKilometrage < 20000) 
+                  {
+                    
+                    compensation = (totalKilometrage * 0.320) + 1244
+            
+                  } 
+                  else if (totalKilometrage > 20000) 
+                  {
+                    
+                    compensation = totalKilometrage * 0.382
+            
+                  }
+                  break;
+
+          case '7 CV et plus' :
+                  if(totalKilometrage <= 5000 )
+                  {
+            
+                      compensation = totalKilometrage * 0.595
+            
+                  }
+                  else if (totalKilometrage > 5001 && totalKilometrage < 20000) 
+                  {
+                    
+                    compensation = (totalKilometrage * 0.337) + 1288
+            
+                  } 
+                  else if (totalKilometrage > 20000) 
+                  {
+                    
+                    compensation = totalKilometrage * 0.401
+            
+                  }
+                  break;
+          
+          }
+        
+        %>
   
         <div class="row">
   
@@ -29,10 +147,10 @@
   
               <div class="card-body">
   
-                <b>Entreprise : </b> <br/>
-                <b>Nom : </b> <br/>
-                <b>Type de véhicule :</b> <br/>
-                <b>Année : </b>
+                <b>Entreprise : </b> <%= infosFiche.entitee.nom_entitee %>  <br/>
+                <b>Nom : </b> <%= infosFiche.individu.prenom %> <%= infosFiche.individu.nom %> <br/>
+                <b>Type de véhicule : </b> <%= infosFiche.vehicule.marque %> - <%= infosFiche.vehicule.modele %> - <%= infosFiche.vehicule.bareme.chevauxFiscaux %><br/>
+                <b>Année : <%= infosFiche.vehicule.annee %></b>
   
               </div>
   
@@ -49,10 +167,10 @@
                 Kilométrage sur toute la période
               </div>
               <div class="card-body">
-                Relevé de compteur au départ <br/>
-                Relevé de compteur à l'arrivée <br/>
-                Kilomètres parcourus <br/>
-                Compensation <br/>
+                <b>Relevé de compteur au départ :</b> <br/>
+                <b>Relevé de compteur à l'arrivée : </b> <br/>
+                <b>Kilomètres parcourus :</b> <span id="total_kilometrage_deux"><%= totalKilometrage %> KM</span><br/>
+                <b>Compensation : </b> <span id="total_compensation_deux"><%= Math.round(compensation) %> €</span>  <br/>
               </div>
   
   
@@ -65,31 +183,85 @@
         </div>
   
         <br/>
+
+        <a class="btn btn-dark float-right" id="nouveau_trajet" role="button">Nouveau trajet</a><br/>
+
+        <br/>
+        <br/>
+
+        <form method="POST" action="/mise-a-jour-fiche">
+        <input type="hidden" id="total_trajet" name="total_trajet" />
+        <input type="hidden" id="chevauxFiscaux" name="chevauxFiscaux" value="<%= infosFiche.vehicule.bareme.chevauxFiscaux %>" />
+        <input type="hidden" name="totalKilometrage" id="dataTotalKilometrage" value="<%= totalKilometrage %>" />
+        <input type="hidden" name="compensationKilometrage" id="dataCompensation" />
+        <input type="hidden" name="individu" value="<%= infosFiche.individuId %>"/>
+        <input type="hidden" name="fiche" value="<%= infosFiche.id %>" />
+
+        <br/>
   
-        <table class="table table-bordered">
+        <table id="tableFiche" class="table table-bordered">
           <thead>
             <tr>
               <th scope="col">Date</th>
               <th scope="col">Trajet</th>
               <th scope="col">Commentaire</th>
-              <th colspan="3">Relevée de compteur</td>
+              <th colspan="3">Relevée de compteur</th>
+              <th scope="col">Action</th>
             </tr>
           </thead>
           <tbody>
-  
-            <tr>
-              <th scope="row">28/09/2020</th>
-              <td>Saint-Pierre / Saint-Louis</td>
-              <td>Projet</td>
-              <td>Arrivée</td>
-              <td>Départ</td>
-              <td>Distance</td>
-            </tr>
-            <tr><td colspan="3" rowspan="1"></td><td colspan="2">Total kilomètres parcourus</td><td>0 Km</td></tr>
-            <tr><td colspan="3" rowspan="1"></td><td colspan="2">Montant indemnité</td><td># N/A</td></tr>
+            <% trajets.forEach(function(trajet) { %>
+              <tr>
+                <th scope="row">
+                    <%= trajet.date %>
+                </th>
+                <td>
+                  <%= trajet.trajet %>
+                </td>
+                <td>
+                  <%= trajet.commentaire %>
+                </td>
+                <td>
+                  <%= trajet.depart %>
+                </td>
+                <td>
+                  <%= trajet.arrivee %>
+                </td>
+                <td>
+                  <%= trajet.distance %>
+                </td>
+                <td>
+                  <a href="/delete-trajet/<%= trajet.id %>/<%= infosFiche.id %>">Delete</a>
+                </td>
+              </tr>
+              <% }); %>
+            </tbody>
+          <tbody id="listeTrajet">
+
   
           </tbody>
         </table>
+
+        <table class="table table-bordered">
+          <thead>
+            <tr>
+              <th></th>
+              <th></th>
+              <th></th>
+              <th colspan="3"></th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td colspan="3" rowspan="1"></td><td colspan="3">Total kilomètres parcourus</td><td id="total_kilometrage"><%= totalKilometrage %> KM</td></tr>
+            <tr><td colspan="3" rowspan="1"></td><td colspan="3">Montant indemnité</td><td id="total_compensation"><%= Math.round(compensation) %> €</td></tr>
+          </tbody>
+        </table>
+
+        <br/>
+
+        <button type="submit" class="btn btn-dark btn-block">Sauvegarder la fiche</button>
+        </form>
   
     </div>
 

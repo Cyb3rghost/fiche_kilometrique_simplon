@@ -1,28 +1,25 @@
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = require('../database');
 
-const Vehicules = sequelize.define('vehicules', {
+const Baremes = sequelize.define('baremes', {
     id: {
         type: DataTypes.INTEGER,
         autoIncrement: true,
         allowNull: false,
         primaryKey: true
     },
-    marque: {
+    chevauxFiscaux: {
       type: DataTypes.TEXT,
     },
-    modele: {
+    baremeUn: {
       type: DataTypes.TEXT
     },
-    baremeId: {
-      type: DataTypes.INTEGER
+    baremeDeux: {
+      type: DataTypes.TEXT
     },
-    annee: {
-      type: DataTypes.NUMBER
-    },
-    immatriculation: {
+    baremeTrois: {
       type: DataTypes.TEXT
     }
   }, { timestamps: true });
 
-module.exports = Vehicules;
+module.exports = Baremes;

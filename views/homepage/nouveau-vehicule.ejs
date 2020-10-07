@@ -34,8 +34,12 @@
             <input type="text" class="form-control" name="modele">
           </div>
           <div class="form-group">
-            <label for="exampleInputEmail1">Puissance</label>
-            <input type="text" class="form-control" name="puissance">
+            <label>Puissance</label>
+            <select class="form-control" name="puissance">
+              <% baremes.forEach(function(bareme) { %>
+                  <option value="<%= bareme.id %>"><%= bareme.chevauxFiscaux %></option>
+              <% }); %>
+            </select>  
           </div>
           <div class="form-group">
             <label for="exampleInputEmail1">Année</label>
